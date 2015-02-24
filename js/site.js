@@ -8,7 +8,7 @@ var config = {
     whatFieldName:"Activity",
     whereFieldName:"Region",
     geo:"data/regions.geojson",
-    geoNameAttribute:"NAME_REF",
+    joinAttribute:"NAME_REF",
     x:"-3",
     y:"7",
     zoom:"2200",
