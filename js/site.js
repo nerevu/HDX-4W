@@ -10,7 +10,7 @@ var config = {
     geo:"data/regions.geojson",
     geoNameAttribute:"NAME_REF",
     x:"-3",
-    y:"6.5",
+    y:"7",
     zoom:"2200",
     colors:['#81d4fa','#4fc3f7','#29b6f6','#03a9f4','#039be5','#0288d1','#0277bd','#01579b']
 };
@@ -49,7 +49,8 @@ function generate3WComponent(config,data,geom){
             .labelOffsetY(13)
             .colors(config.colors)
             .colorDomain([0,7])
-            .colorAccessor(function(d, i){return i%8;});
+            .colorAccessor(function(d, i){return i%8;})
+            .xAxis().ticks(5);
 
     whatChart.width($('#hxd-3W-what').width()).height(400)
             .dimension(whatDimension)
@@ -61,7 +62,8 @@ function generate3WComponent(config,data,geom){
             .labelOffsetY(13)
             .colors(config.colors)
             .colorDomain([0,7])
-            .colorAccessor(function(d, i){return i%8;});
+            .colorAccessor(function(d, i){return i%8;})
+            .xAxis().ticks(5);
 
     dc.dataCount('#count-info')
             .dimension(cf)
@@ -94,7 +96,7 @@ function generate3WComponent(config,data,geom){
     g.append('text')
         .attr('class', 'x-axis-label')
         .attr('text-anchor', 'middle')
-        .attr('x', $('#hdx-3W-where').width()/2)
+        .attr('x', $('#hdx-3W-who').width()/2)
         .attr('y', 400)
         .text('Activities');
 
