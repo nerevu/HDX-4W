@@ -82,7 +82,7 @@ function generate3WComponent(config,data,geom){
                 }
             })
             .overlayGeoJson(geom.features, 'Regions', function (d) {
-                return d.properties[config.geoNameAttribute];
+                return d.properties[config.joinAttribute];
             })
             .projection(d3.geo.mercator().center([config.x,config.y]).scale(config.zoom))
             .title(function(d){
