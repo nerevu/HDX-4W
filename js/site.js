@@ -1,17 +1,17 @@
 //configuration object
 
 var config = {
-    title:"Ebola 3W",
-    description:"Who, What, Where for activities in the ebola response. An activity is an organisation carrying out an activity type in a region.",
-    data:"data/data.json",
+    title:"HDX 3W",
+    description:"Who, What, Where ",
+    data:"data/convertcsv.json",
     whoFieldName:"Organisation",
-    whatFieldName:"Activity",
-    whereFieldName:"Region",
-    geo:"data/regions.geojson",
+    whatFieldName:"Sector",
+    whereFieldName:"DIST_NO",
+    geo:"data/SOM_adm2_polbnda.geojson",
     joinAttribute:"NAME_REF",
-    x:"-3",
-    y:"7",
-    zoom:"2200",
+    x:"55",
+    y:"3",
+    zoom:"1500",
     colors:['#81d4fa','#4fc3f7','#29b6f6','#03a9f4','#039be5','#0288d1','#0277bd','#01579b']
 };
 
@@ -130,7 +130,12 @@ var geomCall = $.ajax({
 //when both ready construct 3W
 
 $.when(dataCall, geomCall).then(function(dataArgs, geomArgs){
-    generate3WComponent(config,dataArgs[0],geomArgs[0]);
+    var geom = geomArgs[0];
+    console.log(geom);
+    geom.features.forEach(function(e){
+        e.properties[config.joinAttribute] = String(e.properties[config.joinAttribute]); 
+    });
+    generate3WComponent(config,dataArgs[0],geom);
 });
 
 /*
