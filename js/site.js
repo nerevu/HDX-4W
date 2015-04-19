@@ -9,10 +9,10 @@ var config = {
     whereFieldName:"DIST_NO",
     geo:"data/SOM_adm2_polbnda.geojson",
     joinAttribute:"NAME_REF",
-    x:"55",
-    y:"3",
-    zoom:"1500",
-    colors:['#81d4fa','#4fc3f7','#29b6f6','#03a9f4','#039be5','#0288d1','#0277bd','#01579b']
+    x:"46",
+    y:"6",
+    zoom:"5",
+    color:"#03a9f4"
 };
 
 //function to generate the 3W component
@@ -26,7 +26,7 @@ function generate3WComponent(config,data,geom){
 
     var whoChart = dc.rowChart('#hdx-3W-who');
     var whatChart = dc.rowChart('#hdx-3W-what');
-    var whereChart = dc.geoChoroplethChart('#hdx-3W-where');
+    var whereChart = dc.leafletChoroplethChart('#hdx-3W-where');
 
     var cf = crossfilter(data);
 
@@ -47,9 +47,8 @@ function generate3WComponent(config,data,geom){
                 return group.top(15);
             })
             .labelOffsetY(13)
-            .colors(config.colors)
-            .colorDomain([0,7])
-            .colorAccessor(function(d, i){return i%8;})
+            .colors([config.color])
+            .colorAccessor(function(d, i){return 0;})
             .xAxis().ticks(5);
 
     whatChart.width($('#hxd-3W-what').width()).height(400)
@@ -60,19 +59,21 @@ function generate3WComponent(config,data,geom){
                 return group.top(15);
             })
             .labelOffsetY(13)
-            .colors(config.colors)
-            .colorDomain([0,7])
-            .colorAccessor(function(d, i){return i%8;})
+            .colors([config.color])
+            .colorAccessor(function(d, i){return 0;})
             .xAxis().ticks(5);
 
     dc.dataCount('#count-info')
             .dimension(cf)
             .group(all);
 
-    whereChart.width($('#hxd-3W-where').width()).height(400)
+    whereChart.width($('#hxd-3W-where').width()).height(360)
             .dimension(whereDimension)
             .group(whereGroup)
-            .colors(['#DDDDDD', config.colors[3]])
+            .center([config.y,config.x])
+            .zoom(config.zoom)    
+            .geojson(geom)
+            .colors(['#CCCCCC', config.color])
             .colorDomain([0, 1])
             .colorAccessor(function (d) {
                 if(d>0){
@@ -80,16 +81,15 @@ function generate3WComponent(config,data,geom){
                 } else {
                     return 0;
                 }
-            })
-            .overlayGeoJson(geom.features, 'Regions', function (d) {
-                return d.properties[config.joinAttribute];
-            })
-            .projection(d3.geo.mercator().center([config.x,config.y]).scale(config.zoom))
-            .title(function(d){
-                return d.key;
-            });
+            })           
+            .featureKeyAccessor(function(feature){
+                return feature.properties[config.joinAttribute];
+            }).map();
 
     dc.renderAll();
+    
+    var map = whereChart.map();
+    console.log(map);
     
     var g = d3.selectAll('#hdx-3W-who').select('svg').append('g');
     
@@ -131,7 +131,6 @@ var geomCall = $.ajax({
 
 $.when(dataCall, geomCall).then(function(dataArgs, geomArgs){
     var geom = geomArgs[0];
-    console.log(geom);
     geom.features.forEach(function(e){
         e.properties[config.joinAttribute] = String(e.properties[config.joinAttribute]); 
     });
