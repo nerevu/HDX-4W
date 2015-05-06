@@ -9,6 +9,7 @@ var config = {
     whereFieldName:"DIST_NO",
     geo:"data/SOM_adm2_polbnda.geojson",
     joinAttribute:"NAME_REF",
+    nameAttribute:"DISTRICT",
     color:"#03a9f4"
 };
 
@@ -16,7 +17,9 @@ var config = {
 //data is the whole 3W Excel data set
 //geom is geojson file
 
-function generate3WComponent(config,data,geom){    
+function generate3WComponent(config,data,geom){
+    
+    var lookup = genLookup(geom,config);
     
     $('#title').html(config.title);
     $('#description').html(config.description);
@@ -81,7 +84,10 @@ function generate3WComponent(config,data,geom){
             })           
             .featureKeyAccessor(function(feature){
                 return feature.properties[config.joinAttribute];
-            });
+            }).popup(function(d){
+                return lookup[d.key];
+            })
+            .renderPopup(true);
 
     dc.renderAll();
     
@@ -110,6 +116,14 @@ function generate3WComponent(config,data,geom){
     function zoomToGeom(geom){
         var bounds = d3.geo.bounds(geom);
         map.fitBounds([[bounds[0][1],bounds[0][0]],[bounds[1][1],bounds[1][0]]]);
+    }
+    
+    function genLookup(geojson,config){
+        var lookup = {};
+        geojson.features.forEach(function(e){
+            lookup[e.properties[config.joinAttribute]] = String(e.properties[config.nameAttribute]);
+        });
+        return lookup;
     }
 }
 
