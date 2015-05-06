@@ -27,3 +27,16 @@
     border-bottom-width: 1px;
     margin-bottom:20px;
 }
+
+.colheight{
+    height:450px;
+}
+
+.removepadding {
+    padding-right:0px;
+    padding-left:0px;
+}
+    
+ .hdx-3w-chart {
+    width:100%;
+ }
