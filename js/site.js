@@ -1,14 +1,14 @@
 //configuration object
 
 var config = {
-    title:"HDX 3W",
-    description:"Who, What, Where ",
-    data:"data/convertcsv.json",
-    whoFieldName:"Organisation",
-    whatFieldName:"Sector",
-    whereFieldName:"DIST_NO",
-    geo:"data/SOM_adm2_polbnda.geojson",
-    joinAttribute:"NAME_REF",
+    title:"Nepal Earthquake 2015 3W",
+    description:"Who is doing What, Where in response to the Nepal Earthquake - 06/05/2015",
+    data:"data/nepal_data.json",
+    whoFieldName:"Agency Full Name",
+    whatFieldName:"Sector / Cluster",
+    whereFieldName:"DistPCode",
+    geo:"data/nepal_districts.geojson",
+    joinAttribute:"HLCIT_CODE",
     nameAttribute:"DISTRICT",
     color:"#03a9f4"
 };
