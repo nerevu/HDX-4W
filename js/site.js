@@ -199,18 +199,19 @@ function initSlider() {
 
 function play(value) {
   var step = 30
+    , delay = 2000
   if ((value <= window.max) && !window.paused) {
     window.$element.val(value).change();
     updateCharts(value);
     return setTimeout((function() {
       play(value + step);
-    }), 2000);
+    }), delay);
   } else if ((value - step <= window.max) && !window.paused) {
     window.$element.val(window.max).change();
     updateCharts(window.max);
     return setTimeout((function() {
       play(value + step);
-    }), 2000);
+    }), delay);
   } else if (window.paused) {
     window.paused = false;
   } else if (value > window.max) {
