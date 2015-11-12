@@ -1,17 +1,18 @@
 //configuration object
 var config = {
-  title:"Nepal Earthquake 2015 4W",
-  description:"Who is doing What, Where, and When in response to the Nepal Earthquake - 06/05/2015",
-  data:"data/nepal_data.json",
-  whoFieldName:"Agency Full Name",
-  whatFieldName:"Sector / Cluster",
-  whereFieldName:"DistPCode",
-  startFieldName:"Start",
-  endFieldName:"End",
-  geo:"data/nepal_districts.geojson",
-  joinAttribute:"HLCIT_CODE",
-  nameAttribute:"DISTRICT",
-  color:"#fdbe85"
+  title: "Nepal Earthquake 2015 4W",
+  description: "Who is doing What, Where, and When in response to the Nepal Earthquake - 06/05/2015",
+  data: "data/nepal_data.json",
+  whoFieldName: "Agency Full Name",
+  whatFieldName: "Sector / Cluster",
+  whereFieldName: "DistPCode",
+  startFieldName: "Start",
+  endFieldName: "End",
+  geo: "data/nepal_districts.geojson",
+  joinAttribute: "HLCIT_CODE",
+  nameAttribute: "DISTRICT",
+  color: "#fdbe85",
+  enable4w: false
 };
 
 // globals
@@ -22,10 +23,10 @@ window.$element = $('.slider');
 window.baseDate = new Date('1/1/1970')
 window.firstPlay = true
 
-//function to generate the 3W component
-//data is the whole 3W Excel data set
+//function to generate the 3W/4w component
+//data is the json file
 //geom is geojson file
-function generate3WComponent(config, data, geom) {
+function generateComponent(config, data, geom) {
   var lookup, margins;
   $('#title').html(config.title);
   $('#description').html(config.description);
@@ -250,8 +251,13 @@ $.when(dataCall, geomCall).then(function(dataArgs, geomArgs){
   geom.features.forEach(function(e){
     e.properties[config.joinAttribute] = String(e.properties[config.joinAttribute]);
   });
-  generate3WComponent(config,dataArgs[0],geom);
-  initSlider();
+
+  generateComponent(config,dataArgs[0],geom);
+
+  if (config.enable4w) {
+    initSlider();
+    $('#4w').removeClass('hide')
+  };
 });
 
 $('.play').on('click', function(){
@@ -268,5 +274,7 @@ $('.pause').on('click', function(){
 })
 
 $('#reset').on('click', function(){
-  reset()
+  if (config.enable4w) {
+    reset()
+  };
 })
