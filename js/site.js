@@ -1,16 +1,16 @@
 //configuration object
 var config = {
-  title: "Nepal Earthquake 2015 4W",
-  description: "Who is doing What, Where, and When in response to the Nepal Earthquake - 06/05/2015",
-  data: "data/nepal_data.json",
-  whoFieldName: "Agency Full Name",
-  whatFieldName: "Sector / Cluster",
-  whereFieldName: "DistPCode",
-  startFieldName: "Start",
-  endFieldName: "End",
-  geo: "data/nepal_districts.geojson",
-  joinAttribute: "HLCIT_CODE",
-  nameAttribute: "DISTRICT",
+  title: "La Nina Consortium 4W",
+  description: "Who is doing What, Where, and When in response to La Nina",
+  data: "data/data.json",
+  whoFieldName: "agency",
+  whatFieldName: "project_title",
+  whereFieldName: "county",
+  startFieldName: "start_date",
+  endFieldName: "end_date",
+  geo: "data/geography.geojson",
+  joinAttribute: "COUNTY_NAM",
+  nameAttribute: "COUNTY_NAM",
   color: "#fdbe85",
   enable4w: false
 };
@@ -53,7 +53,7 @@ function generateComponent(config, data, geom) {
     });
 
   var whereDimension = cf.dimension(function(d){
-      return d[config.whereFieldName];
+      return d[config.whereFieldName].toLowerCase();
     });
 
   window.startDimension = cf.dimension(function(d){
@@ -114,7 +114,7 @@ function generateComponent(config, data, geom) {
       }
     })
     .featureKeyAccessor(function(feature){
-      return feature.properties[config.joinAttribute];
+      return feature.properties[config.joinAttribute].toLowerCase();
     }).popup(function(d){
       return lookup[d.key];
     })
@@ -152,7 +152,9 @@ function generateComponent(config, data, geom) {
   function genLookup(geojson, config){
     var lookup = {};
     geojson.features.forEach(function(e){
-      lookup[e.properties[config.joinAttribute]] = String(e.properties[config.nameAttribute]);
+      join = e.properties[config.joinAttribute].toLowerCase()
+      name = String(e.properties[config.nameAttribute])
+      lookup[join] = name;
     });
     return lookup;
   }
@@ -248,11 +250,14 @@ var geomCall = $.ajax({
 //when both ready construct 4W
 $.when(dataCall, geomCall).then(function(dataArgs, geomArgs){
   var geom = geomArgs[0];
+  var data = dataArgs[0].result.records
+
   geom.features.forEach(function(e){
-    e.properties[config.joinAttribute] = String(e.properties[config.joinAttribute]);
+    join = String(e.properties[config.joinAttribute])
+    e.properties[config.joinAttribute] = join;
   });
 
-  generateComponent(config,dataArgs[0],geom);
+  generateComponent(config, data, geom);
 
   if (config.enable4w) {
     initSlider();
