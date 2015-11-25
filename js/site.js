@@ -12,7 +12,7 @@ var config = {
   joinAttribute: "COUNTY_NAM",
   nameAttribute: "COUNTY_NAM",
   color: "#fdbe85",
-  enable4w: false
+  enable4w: true
 };
 
 // globals
@@ -261,7 +261,7 @@ $.when(dataCall, geomCall).then(function(dataArgs, geomArgs){
 
   if (config.enable4w) {
     initSlider();
-    $('#4w').removeClass('hide')
+    $('.4w').removeClass('hide')
   };
 });
 
