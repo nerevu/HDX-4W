@@ -69,8 +69,8 @@ function generateComponent(config, data, geom) {
     , whereGroup = whereDimension.group()
     , all = cf.groupAll()
 
-  window.firstDate = new Date(window.startDimension.bottom(1)[0].Start)
-  window.lastDate = new Date(window.endDimension.top(1)[0].End)
+  window.firstDate = new Date(window.startDimension.bottom(1)[0][config.startFieldName])
+  window.lastDate = new Date(window.endDimension.top(1)[0][config.endFieldName])
 
   whoChart.width($('#hxd-3W-who').width()).height(400)
     .dimension(whoDimension)
