@@ -203,6 +203,7 @@ function initSlider() {
 function play(value) {
     var step = 30
         , delay = 2000
+
     if ((value <= window.max) && !window.paused) {
         window.$element.val(value).change();
         updateCharts(value);
