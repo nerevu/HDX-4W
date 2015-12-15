@@ -234,6 +234,25 @@ function reset() {
     $('.pause').addClass('hide')
 };
 
+$('.play').on('click', function(){
+    play(window.firstPlay ? window.minDate : window.value);
+    $('.play').addClass('hide')
+    $('.pause').removeClass('hide')
+    window.firstPlay = false
+})
+
+$('.pause').on('click', function(){
+    pause()
+    $('.play').removeClass('hide')
+    $('.pause').addClass('hide')
+})
+
+$('#reset').on('click', function(){
+    if (config.enable4w) {
+        reset()
+    };
+})
+
 //load 4W data
 var dataCall = $.ajax({
     type: 'GET',
@@ -266,21 +285,3 @@ $.when(dataCall, geomCall).then(function(dataArgs, geomArgs){
     };
 });
 
-$('.play').on('click', function(){
-    play(window.firstPlay ? window.minDate : window.value);
-    $('.play').addClass('hide')
-    $('.pause').removeClass('hide')
-    window.firstPlay = false
-})
-
-$('.pause').on('click', function(){
-    pause()
-    $('.play').removeClass('hide')
-    $('.pause').addClass('hide')
-})
-
-$('#reset').on('click', function(){
-    if (config.enable4w) {
-        reset()
-    };
-})
