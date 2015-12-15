@@ -53,21 +53,25 @@ function generate3WComponent(config, data, geom) {
             return d[config.whereFieldName].toLowerCase();
         });
 
-    startDimension = cf.dimension(function(d){
-        return new Date(d[config.startFieldName]);
-    });
+    if (config.startFieldName && config.endFieldName){
+        var startDimension, endDimension, firstDate, lastDate
 
-    endDimension = cf.dimension(function(d){
-        return new Date(d[config.endFieldName]);
-    });
+        startDimension = cf.dimension(function(d){
+            return new Date(d[config.startFieldName]);
+        });
+
+        endDimension = cf.dimension(function(d){
+            return new Date(d[config.endFieldName]);
+        });
+
+        firstDate = new Date(startDimension.bottom(1)[0][config.startFieldName])
+        lastDate = new Date(endDimension.top(1)[0][config.endFieldName])
+    }
 
     var whoGroup = whoDimension.group()
       , whatGroup = whatDimension.group()
       , whereGroup = whereDimension.group()
       , all = cf.groupAll()
-
-    firstDate = new Date(startDimension.bottom(1)[0][config.startFieldName])
-    lastDate = new Date(endDimension.top(1)[0][config.endFieldName])
 
     whoChart.width($('#hxd-3W-who').width()).height(400)
         .dimension(whoDimension)
