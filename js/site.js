@@ -145,6 +145,11 @@ function generate3WComponent(config, data, geom) {
         .attr('y', 400)
         .text('Activities');
 
+    if (config.enable4w) {
+        initSlider();
+        $('.4w').removeClass('hide')
+    };
+
     function zoomToGeom(geom){
         var bounds = d3.geo.bounds(geom);
         map.fitBounds([[bounds[0][1],bounds[0][0]],[bounds[1][1],bounds[1][0]]]);
@@ -159,30 +164,6 @@ function generate3WComponent(config, data, geom) {
         });
         return lookup;
     }
-
-    $('.play').on('click', function(){
-        play(firstPlay ? minDate : val);
-        $('.play').addClass('hide')
-        $('.pause').removeClass('hide')
-        firstPlay = false
-    })
-
-    $('.pause').on('click', function(){
-        pause()
-        $('.play').removeClass('hide')
-        $('.pause').addClass('hide')
-    })
-
-    $('#reset').on('click', function(){
-        if (config.enable4w) {
-            reset()
-        };
-    })
-
-    if (config.enable4w) {
-        initSlider();
-        $('.4w').removeClass('hide')
-    };
 
     function initSlider() {
         var $value, count, now, start;
@@ -257,6 +238,25 @@ function generate3WComponent(config, data, geom) {
         $('.play').removeClass('hide')
         $('.pause').addClass('hide')
     };
+
+    $('.play').on('click', function(){
+        play(firstPlay ? minDate : val);
+        $('.play').addClass('hide')
+        $('.pause').removeClass('hide')
+        firstPlay = false
+    })
+
+    $('.pause').on('click', function(){
+        pause()
+        $('.play').removeClass('hide')
+        $('.pause').addClass('hide')
+    })
+
+    $('#reset').on('click', function(){
+        if (config.enable4w) {
+            reset()
+        };
+    })
 }
 
 $(document).ready(
