@@ -253,35 +253,40 @@ $('#reset').on('click', function(){
     };
 })
 
-//load 4W data
-var dataCall = $.ajax({
-    type: 'GET',
-    url: config.data,
-    dataType: 'json',
-});
+$(document).ready(
+    function(){
+        //load 4W data
+        var dataCall = $.ajax({
+            type: 'GET',
+            url: config.data,
+            dataType: 'json',
+        });
 
-//load geometry
-var geomCall = $.ajax({
-    type: 'GET',
-    url: config.geo,
-    dataType: 'json',
-});
+        //load geometry
+        var geomCall = $.ajax({
+            type: 'GET',
+            url: config.geo,
+            dataType: 'json',
+        });
 
-//when both ready construct 4W
-$.when(dataCall, geomCall).then(function(dataArgs, geomArgs){
-    var geom = geomArgs[0];
-    var data = dataArgs[0].result.records
+        //when both ready construct 4W
+        $.when(dataCall, geomCall).then(function(dataArgs, geomArgs){
+            var geom = geomArgs[0];
+            var data = dataArgs[0].result.records
 
-    geom.features.forEach(function(e){
-        join = String(e.properties[config.joinAttribute])
-        e.properties[config.joinAttribute] = join;
-    });
+            geom.features.forEach(function(e){
+                join = String(e.properties[config.joinAttribute])
+                e.properties[config.joinAttribute] = join;
+            });
 
-    generateComponent(config, data, geom);
+            generateComponent(config, data, geom);
 
-    if (config.enable4w) {
-        initSlider();
-        $('.4w').removeClass('hide')
-    };
-});
+            if (config.enable4w) {
+                initSlider();
+                $('.4w').removeClass('hide')
+            };
+        });
+    }
+);
+
 
