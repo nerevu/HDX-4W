@@ -19,7 +19,7 @@ var config = {
 window.value = null;
 window.paused = false;
 window.done = true;
-window.$element = $('.slider');
+window.slider = $('.slider');
 window.baseDate = new Date('1/1/1970')
 window.firstPlay = true
 
@@ -180,12 +180,12 @@ function initSlider() {
     start = now.diff(window.baseDate, 'days');
     count = $('.slider').length;
     $value = $('#value')[0];
-    window.min = moment(window.firstDate).diff(window.baseDate, 'days')
-    window.max = moment(window.lastDate).diff(window.baseDate, 'days')
-    window.$element[0].setAttribute('min', window.min);
-    window.$element[0].setAttribute('max', window.max);
-    window.$element[0].setAttribute('value', start);
-    window.$element.rangeslider({
+    window.minDate = moment(window.firstDate).diff(window.baseDate, 'days')
+    window.maxDate = moment(window.lastDate).diff(window.baseDate, 'days')
+    window.slider[0].setAttribute('min', window.minDate);
+    window.slider[0].setAttribute('max', window.maxDate);
+    window.slider[0].setAttribute('value', start);
+    window.slider.rangeslider({
         polyfill: false,
         onInit: function() {
             updateValue($value, this.value);
@@ -204,21 +204,21 @@ function play(value) {
     var step = 30
         , delay = 2000
 
-    if ((value <= window.max) && !window.paused) {
-        window.$element.val(value).change();
+    if ((value <= window.maxDate) && !window.paused) {
+        window.slider.val(value).change();
         updateCharts(value);
         return setTimeout((function() {
             play(value + step);
         }), delay);
-    } else if ((value - step <= window.max) && !window.paused) {
-        window.$element.val(window.max).change();
-        updateCharts(window.max);
+    } else if ((value - step <= window.maxDate) && !window.paused) {
+        window.slider.val(window.maxDate).change();
+        updateCharts(window.maxDate);
         return setTimeout((function() {
             play(value + step);
         }), delay);
     } else if (window.paused) {
         window.paused = false;
-    } else if (value > window.max) {
+    } else if (value > window.maxDate) {
         reset()
     }
 };
@@ -228,8 +228,8 @@ function pause() {
 };
 
 function reset() {
-    window.$element.val(window.min).change();
-    updateCharts(window.min);
+    window.slider.val(window.minDate).change();
+    updateCharts(window.minDate);
     $('.play').removeClass('hide')
     $('.pause').addClass('hide')
 };
@@ -267,7 +267,7 @@ $.when(dataCall, geomCall).then(function(dataArgs, geomArgs){
 });
 
 $('.play').on('click', function(){
-    play(window.firstPlay ? window.min : window.value);
+    play(window.firstPlay ? window.minDate : window.value);
     $('.play').addClass('hide')
     $('.pause').removeClass('hide')
     window.firstPlay = false
