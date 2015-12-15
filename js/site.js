@@ -1,5 +1,5 @@
 //configuration object
-var config = {
+var def_config = {
     title: "La Nina Consortium 4W",
     description: "Who is doing What, Where, and When in response to La Nina",
     data: "data/data.json",
@@ -26,7 +26,7 @@ window.firstPlay = true
 //function to generate the 3W/4w component
 //data is the json file
 //geom is geojson file
-function generateComponent(config, data, geom) {
+function generate3WComponent(config, data, geom) {
     var lookup, margins;
     $('#title').html(config.title);
     $('#description').html(config.description);
@@ -254,6 +254,9 @@ $('#reset').on('click', function(){
 
 $(document).ready(
     function(){
+        //load config
+        var config = def_config;
+
         //load 4W data
         var dataCall = $.ajax({
             type: 'GET',
@@ -270,15 +273,15 @@ $(document).ready(
 
         //when both ready construct 4W
         $.when(dataCall, geomCall).then(function(dataArgs, geomArgs){
-            var geom = geomArgs[0];
-            var data = dataArgs[0].result.records
+            var data = dataArgs[0].result.records;
+            var geom = geomArgs[0]
 
             geom.features.forEach(function(e){
                 join = String(e.properties[config.joinAttribute])
                 e.properties[config.joinAttribute] = join;
             });
 
-            generateComponent(config, data, geom);
+            generate3WComponent(config, data, geom);
 
             if (config.enable4w) {
                 initSlider();
