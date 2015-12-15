@@ -12,7 +12,8 @@ var def_config = {
     joinAttribute: "COUNTY_NAM",
     nameAttribute: "COUNTY_NAM",
     color: "#fdbe85",
-    enable4w: true
+    enable4w: true,
+    dateFormat: "MM/DD/YYYY"
 };
 
 //function to generate the 3W/4w component
@@ -29,6 +30,7 @@ function generate3WComponent(config, data, geom) {
 
     $('#title').html(config.title);
     $('#description').html(config.description);
+
     var margins = {
         top: 0,
         left: 10,
@@ -36,32 +38,30 @@ function generate3WComponent(config, data, geom) {
         bottom: 35
     };
 
-    var whoChart = dc.rowChart('#hdx-3W-who')
-      , whatChart = dc.rowChart('#hdx-3W-what')
-      , whereChart = dc.leafletChoroplethChart('#hdx-3W-where')
-      , cf = crossfilter(data);
-
-    var whoDimension = cf.dimension(function(d){
-            return d[config.whoFieldName];
-        });
-
-    var whatDimension = cf.dimension(function(d){
-            return d[config.whatFieldName];
-        });
+    var containerIdPrefix = "#hdx-3W-"
+      , whoContainerId = containerIdPrefix + 'who'
+      , whatContainerId = containerIdPrefix + 'what'
+      , whereContainerId = containerIdPrefix + 'where'
+      , whoChart = dc.rowChart(whoContainerId)
+      , whatChart = dc.rowChart(whatContainerId)
+      , whereChart = dc.leafletChoroplethChart(whereContainerId)
+      , cf = crossfilter(data)
+      , whoDimension = cf.dimension(function(d){ return d[config.whoFieldName]})
+      , whatDimension = cf.dimension(function(d){ return d[config.whatFieldName]});
 
     var whereDimension = cf.dimension(function(d){
-            return d[config.whereFieldName].toLowerCase();
-        });
+        return d[config.whereFieldName].toLowerCase();
+    });
 
     if (config.startFieldName && config.endFieldName){
         var startDimension, endDimension, firstDate, lastDate
 
         startDimension = cf.dimension(function(d){
-            return new Date(d[config.startFieldName]);
+            return moment(d[config.startFieldName], config.dateFormat).toDate();
         });
 
         endDimension = cf.dimension(function(d){
-            return new Date(d[config.endFieldName]);
+            return moment(d[config.endFieldName], config.dateFormat).toDate();
         });
 
         firstDate = new Date(startDimension.bottom(1)[0][config.startFieldName])
@@ -72,8 +72,11 @@ function generate3WComponent(config, data, geom) {
       , whatGroup = whatDimension.group()
       , whereGroup = whereDimension.group()
       , all = cf.groupAll()
+      , whoWidth = $(whoContainerId).width()
+      , whatWidth = $(whatContainerId).width()
+      , whereWidth = $(whereContainerId).width();
 
-    whoChart.width($('#hxd-3W-who').width()).height(400)
+    whoChart.width(whoWidth).height(400)
         .dimension(whoDimension)
         .group(whoGroup)
         .elasticX(true)
@@ -84,7 +87,7 @@ function generate3WComponent(config, data, geom) {
         .colorAccessor(function(d, i){return 0;})
         .xAxis().ticks(5);
 
-    whatChart.width($('#hxd-3W-what').width()).height(400)
+    whatChart.width(whatWidth).height(400)
         .dimension(whatDimension)
         .group(whatGroup)
         .elasticX(true)
@@ -99,7 +102,7 @@ function generate3WComponent(config, data, geom) {
         .dimension(cf)
         .group(all);
 
-    whereChart.width($('#hxd-3W-where').width()).height(360)
+    whereChart.width(whereWidth).height(360)
         .dimension(whereDimension)
         .group(whereGroup)
         .center([0,0])
@@ -127,21 +130,21 @@ function generate3WComponent(config, data, geom) {
 
     zoomToGeom(geom);
 
-    var g = d3.selectAll('#hdx-3W-who').select('svg').append('g');
+    var g = d3.selectAll(whoContainerId).select('svg').append('g');
 
     g.append('text')
         .attr('class', 'x-axis-label')
         .attr('text-anchor', 'middle')
-        .attr('x', $('#hdx-3W-who').width()/2)
+        .attr('x', whoWidth/2)
         .attr('y', 400)
         .text('Activities');
 
-    var g = d3.selectAll('#hdx-3W-what').select('svg').append('g');
+    var g = d3.selectAll(whatContainerId).select('svg').append('g');
 
     g.append('text')
         .attr('class', 'x-axis-label')
         .attr('text-anchor', 'middle')
-        .attr('x', $('#hdx-3W-what').width()/2)
+        .attr('x', whatWidth/2)
         .attr('y', 400)
         .text('Activities');
 
@@ -173,9 +176,10 @@ function generate3WComponent(config, data, geom) {
         $value = $('#value')[0];
         minDate = moment(firstDate).diff(baseDate, 'days')
         maxDate = moment(lastDate).diff(baseDate, 'days')
-        slider[0].setAttribute('min', minDate);
-        slider[0].setAttribute('max', maxDate);
-        slider[0].setAttribute('value', start);
+
+        slider.attr("min", minDate);
+        slider.attr("max", maxDate);
+        slider.attr("value", start);
         slider.rangeslider({
             polyfill: false,
             onInit: function() {
@@ -212,7 +216,7 @@ function generate3WComponent(config, data, geom) {
         } else if (value > maxDate) {
             reset()
         }
-    };
+    }
 
     function updateCharts(value) {
         dc.filterAll();
@@ -220,17 +224,17 @@ function generate3WComponent(config, data, geom) {
         endDimension.filterRange([m.toDate(), Infinity]);
         startDimension.filterRange([baseDate, (m.add('d', 1)).toDate()]);
         dc.redrawAll();
-    };
+    }
 
     function updateValue(e, value) {
         var m = moment(baseDate).add('days', value);
         e.textContent = m.format("l");
         val = value
-    };
+    }
 
     function pause() {
         paused = true;
-    };
+    }
 
     function reset() {
         slider.val(minDate).change();
