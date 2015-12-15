@@ -38,11 +38,10 @@ function generateComponent(config, data, geom) {
         bottom: 35
     };
 
-
     var whoChart = dc.rowChart('#hdx-3W-who')
-        , whatChart = dc.rowChart('#hdx-3W-what')
-        , whereChart = dc.leafletChoroplethChart('#hdx-3W-where')
-        , cf = crossfilter(data);
+      , whatChart = dc.rowChart('#hdx-3W-what')
+      , whereChart = dc.leafletChoroplethChart('#hdx-3W-where')
+      , cf = crossfilter(data);
 
     var whoDimension = cf.dimension(function(d){
             return d[config.whoFieldName];
@@ -65,9 +64,9 @@ function generateComponent(config, data, geom) {
     });
 
     var whoGroup = whoDimension.group()
-        , whatGroup = whatDimension.group()
-        , whereGroup = whereDimension.group()
-        , all = cf.groupAll()
+      , whatGroup = whatDimension.group()
+      , whereGroup = whereDimension.group()
+      , all = cf.groupAll()
 
     window.firstDate = new Date(window.startDimension.bottom(1)[0][config.startFieldName])
     window.lastDate = new Date(window.endDimension.top(1)[0][config.endFieldName])
@@ -288,5 +287,3 @@ $(document).ready(
         });
     }
 );
-
-
