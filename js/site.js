@@ -42,6 +42,8 @@ function generate3WComponent(config, data, geom) {
       , whoContainerId = containerIdPrefix + 'who'
       , whatContainerId = containerIdPrefix + 'what'
       , whereContainerId = containerIdPrefix + 'where'
+      , whenSelector = containerIdPrefix + 'slider-axis'
+      , sliderSelector = '#js-rangeslider-0'
       , whoChart = dc.rowChart(whoContainerId)
       , whatChart = dc.rowChart(whatContainerId)
       , whereChart = dc.leafletChoroplethChart(whereContainerId)
@@ -54,7 +56,7 @@ function generate3WComponent(config, data, geom) {
     });
 
     if (config.startFieldName && config.endFieldName){
-        var startDimension, endDimension, firstDate, lastDate
+        var startDimension, endDimension, firstDate, lastDate, dateExtent
 
         startDimension = cf.dimension(function(d){
             return moment(d[config.startFieldName], config.dateFormat).toDate();
@@ -66,11 +68,13 @@ function generate3WComponent(config, data, geom) {
 
         firstDate = new Date(startDimension.bottom(1)[0][config.startFieldName])
         lastDate = new Date(endDimension.top(1)[0][config.endFieldName])
+        dateExtent = [firstDate, lastDate]
     }
 
     var whoGroup = whoDimension.group()
       , whatGroup = whatDimension.group()
       , whereGroup = whereDimension.group()
+      , whenGroup = startDimension.group()
       , all = cf.groupAll()
       , whoWidth = $(whoContainerId).width()
       , whatWidth = $(whatContainerId).width()
@@ -153,6 +157,44 @@ function generate3WComponent(config, data, geom) {
         $('.4w').removeClass('hide')
     };
 
+    function drawAxis() {
+        var axisHeight, axisWidth, dateFormat, margin, whenAxis, whenHeight;
+        var whenWidth, xAxis, xScale;
+
+        dateFormat = d3.time.format.multi([
+            ["%b", function(d) {return d.getMonth()}],
+            ["%Y", function() {return true}]
+        ]);
+
+        whenWidth = $(sliderSelector).width();
+        whenHeight = 50;
+        margin = {top: 0, bottom: whenHeight * 1.3, left: 15, right: 15};
+        axisWidth = whenWidth - margin.left - margin.right;
+        axisHeight = whenHeight - margin.top - margin.bottom;
+
+        xScale = d3.time.scale()
+            .domain(dateExtent)
+            .range([0, axisWidth]);
+
+        xAxis = d3.svg.axis()
+            .scale(xScale)
+            .outerTickSize(0)
+            .ticks(Math.max(whenWidth / 100, 2))
+            .tickFormat(dateFormat);
+
+        whenAxis = d3.select(whenSelector)
+            .attr('width', whenWidth)
+            .attr('height', whenHeight)
+            .append('g')
+            .attr('transform', "translate(" + margin.left + ", " + margin.right + ")");
+
+        console.log(whenAxis)
+        whenAxis.append('g')
+            .attr('class', 'x axis')
+            .attr('transform', "translate(0, " + axisHeight + ")")
+            .call(xAxis);
+    };
+
     function zoomToGeom(geom){
         var bounds = d3.geo.bounds(geom);
         map.fitBounds([[bounds[0][1],bounds[0][0]],[bounds[1][1],bounds[1][0]]]);
@@ -185,6 +227,7 @@ function generate3WComponent(config, data, geom) {
             onInit: function() {
                 updateValue($value, this.value);
                 updateCharts(this.value);
+                drawAxis();
             },
             onSlide: function(pos, value) {
                 if (this.grabPos) {
