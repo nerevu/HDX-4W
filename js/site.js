@@ -159,19 +159,24 @@ function generate3WComponent(config, data, geom) {
     }
 }
 
-function updateCharts(value) {
-    dc.filterAll();
-    var m = moment(window.baseDate).add('days', value);
-    window.endDimension.filterRange([m.toDate(), Infinity]);
-    window.startDimension.filterRange([window.baseDate, (m.add('d', 1)).toDate()]);
-    dc.redrawAll();
-};
+$('.play').on('click', function(){
+    play(window.firstPlay ? window.minDate : window.value);
+    $('.play').addClass('hide')
+    $('.pause').removeClass('hide')
+    window.firstPlay = false
+})
 
-function updateValue(e, value) {
-    var m = moment(window.baseDate).add('days', value);
-    e.textContent = m.format("l");
-    window.value = value
-};
+$('.pause').on('click', function(){
+    pause()
+    $('.play').removeClass('hide')
+    $('.pause').addClass('hide')
+})
+
+$('#reset').on('click', function(){
+    if (config.enable4w) {
+        reset()
+    };
+})
 
 function initSlider() {
     var $value, count, now, start;
@@ -222,6 +227,20 @@ function play(value) {
     }
 };
 
+function updateCharts(value) {
+    dc.filterAll();
+    var m = moment(window.baseDate).add('days', value);
+    window.endDimension.filterRange([m.toDate(), Infinity]);
+    window.startDimension.filterRange([window.baseDate, (m.add('d', 1)).toDate()]);
+    dc.redrawAll();
+};
+
+function updateValue(e, value) {
+    var m = moment(window.baseDate).add('days', value);
+    e.textContent = m.format("l");
+    window.value = value
+};
+
 function pause() {
     window.paused = true;
 };
@@ -232,25 +251,6 @@ function reset() {
     $('.play').removeClass('hide')
     $('.pause').addClass('hide')
 };
-
-$('.play').on('click', function(){
-    play(window.firstPlay ? window.minDate : window.value);
-    $('.play').addClass('hide')
-    $('.pause').removeClass('hide')
-    window.firstPlay = false
-})
-
-$('.pause').on('click', function(){
-    pause()
-    $('.play').removeClass('hide')
-    $('.pause').addClass('hide')
-})
-
-$('#reset').on('click', function(){
-    if (config.enable4w) {
-        reset()
-    };
-})
 
 $(document).ready(
     function(){
