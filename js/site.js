@@ -15,23 +15,21 @@ var def_config = {
     enable4w: true
 };
 
-// globals
-window.value = null;
-window.paused = false;
-window.done = true;
-window.slider = $('.slider');
-window.baseDate = new Date('1/1/1970')
-window.firstPlay = true
-
 //function to generate the 3W/4w component
 //data is the json file
 //geom is geojson file
 function generate3WComponent(config, data, geom) {
-    var lookup, margins;
+    var lookup = genLookup(geom, config)
+      , val = null
+      , paused = false
+      , done = true
+      , slider = $('.slider')
+      , baseDate = new Date('1/1/1970')
+      , firstPlay = true;
+
     $('#title').html(config.title);
     $('#description').html(config.description);
-    lookup = genLookup(geom, config);
-    margins = {
+    var margins = {
         top: 0,
         left: 10,
         right: 10,
@@ -55,11 +53,11 @@ function generate3WComponent(config, data, geom) {
             return d[config.whereFieldName].toLowerCase();
         });
 
-    window.startDimension = cf.dimension(function(d){
+    startDimension = cf.dimension(function(d){
         return new Date(d[config.startFieldName]);
     });
 
-    window.endDimension = cf.dimension(function(d){
+    endDimension = cf.dimension(function(d){
         return new Date(d[config.endFieldName]);
     });
 
@@ -68,8 +66,8 @@ function generate3WComponent(config, data, geom) {
       , whereGroup = whereDimension.group()
       , all = cf.groupAll()
 
-    window.firstDate = new Date(window.startDimension.bottom(1)[0][config.startFieldName])
-    window.lastDate = new Date(window.endDimension.top(1)[0][config.endFieldName])
+    firstDate = new Date(startDimension.bottom(1)[0][config.startFieldName])
+    lastDate = new Date(endDimension.top(1)[0][config.endFieldName])
 
     whoChart.width($('#hxd-3W-who').width()).height(400)
         .dimension(whoDimension)
@@ -157,100 +155,105 @@ function generate3WComponent(config, data, geom) {
         });
         return lookup;
     }
-}
 
-$('.play').on('click', function(){
-    play(window.firstPlay ? window.minDate : window.value);
-    $('.play').addClass('hide')
-    $('.pause').removeClass('hide')
-    window.firstPlay = false
-})
+    $('.play').on('click', function(){
+        play(firstPlay ? minDate : val);
+        $('.play').addClass('hide')
+        $('.pause').removeClass('hide')
+        firstPlay = false
+    })
 
-$('.pause').on('click', function(){
-    pause()
-    $('.play').removeClass('hide')
-    $('.pause').addClass('hide')
-})
+    $('.pause').on('click', function(){
+        pause()
+        $('.play').removeClass('hide')
+        $('.pause').addClass('hide')
+    })
 
-$('#reset').on('click', function(){
+    $('#reset').on('click', function(){
+        if (config.enable4w) {
+            reset()
+        };
+    })
+
     if (config.enable4w) {
-        reset()
+        initSlider();
+        $('.4w').removeClass('hide')
     };
-})
 
-function initSlider() {
-    var $value, count, now, start;
-    now = moment(new Date());
-    start = now.diff(window.baseDate, 'days');
-    count = $('.slider').length;
-    $value = $('#value')[0];
-    window.minDate = moment(window.firstDate).diff(window.baseDate, 'days')
-    window.maxDate = moment(window.lastDate).diff(window.baseDate, 'days')
-    window.slider[0].setAttribute('min', window.minDate);
-    window.slider[0].setAttribute('max', window.maxDate);
-    window.slider[0].setAttribute('value', start);
-    window.slider.rangeslider({
-        polyfill: false,
-        onInit: function() {
-            updateValue($value, this.value);
-            updateCharts(this.value);
-        },
-        onSlide: function(pos, value) {
-            if (this.grabPos) {
-                updateValue($value, value);
-            }
-        },
-        onSlideEnd: function(pos, value) {updateCharts(value)}
-    });
-}
-
-function play(value) {
-    var step = 30
-        , delay = 2000
-
-    if ((value <= window.maxDate) && !window.paused) {
-        window.slider.val(value).change();
-        updateCharts(value);
-        return setTimeout((function() {
-            play(value + step);
-        }), delay);
-    } else if ((value - step <= window.maxDate) && !window.paused) {
-        window.slider.val(window.maxDate).change();
-        updateCharts(window.maxDate);
-        return setTimeout((function() {
-            play(value + step);
-        }), delay);
-    } else if (window.paused) {
-        window.paused = false;
-    } else if (value > window.maxDate) {
-        reset()
+    function initSlider() {
+        var $value, count, now, start;
+        now = moment(new Date());
+        start = now.diff(baseDate, 'days');
+        count = $('.slider').length;
+        $value = $('#value')[0];
+        minDate = moment(firstDate).diff(baseDate, 'days')
+        maxDate = moment(lastDate).diff(baseDate, 'days')
+        slider[0].setAttribute('min', minDate);
+        slider[0].setAttribute('max', maxDate);
+        slider[0].setAttribute('value', start);
+        slider.rangeslider({
+            polyfill: false,
+            onInit: function() {
+                updateValue($value, this.value);
+                updateCharts(this.value);
+            },
+            onSlide: function(pos, value) {
+                if (this.grabPos) {
+                    updateValue($value, value);
+                }
+            },
+            onSlideEnd: function(pos, value) {updateCharts(value)}
+        });
     }
-};
 
-function updateCharts(value) {
-    dc.filterAll();
-    var m = moment(window.baseDate).add('days', value);
-    window.endDimension.filterRange([m.toDate(), Infinity]);
-    window.startDimension.filterRange([window.baseDate, (m.add('d', 1)).toDate()]);
-    dc.redrawAll();
-};
+    function play(value) {
+        var step = 30
+          , delay = 2000
 
-function updateValue(e, value) {
-    var m = moment(window.baseDate).add('days', value);
-    e.textContent = m.format("l");
-    window.value = value
-};
+        if ((value <= maxDate) && !paused) {
+            slider.val(value).change();
+            updateCharts(value);
+            return setTimeout((function() {
+                play(value + step);
+            }), delay);
+        } else if ((value - step <= maxDate) && !paused) {
+            slider.val(maxDate).change();
+            updateCharts(maxDate);
+            return setTimeout((function() {
+                play(value + step);
+            }), delay);
+        } else if (paused) {
+            paused = false;
+        } else if (value > maxDate) {
+            reset()
+        }
+    };
 
-function pause() {
-    window.paused = true;
-};
+    function updateCharts(value) {
+        dc.filterAll();
+        var m = moment(baseDate).add('days', value);
+        endDimension.filterRange([m.toDate(), Infinity]);
+        startDimension.filterRange([baseDate, (m.add('d', 1)).toDate()]);
+        dc.redrawAll();
+    };
 
-function reset() {
-    window.slider.val(window.minDate).change();
-    updateCharts(window.minDate);
-    $('.play').removeClass('hide')
-    $('.pause').addClass('hide')
-};
+    function updateValue(e, value) {
+        var m = moment(baseDate).add('days', value);
+        e.textContent = m.format("l");
+        val = value
+    };
+
+    function pause() {
+        paused = true;
+    };
+
+    function reset() {
+        slider.val(minDate).change();
+        updateCharts(minDate);
+        $('.play').removeClass('hide')
+        $('.pause').addClass('hide')
+    };
+}
 
 $(document).ready(
     function(){
@@ -282,11 +285,6 @@ $(document).ready(
             });
 
             generate3WComponent(config, data, geom);
-
-            if (config.enable4w) {
-                initSlider();
-                $('.4w').removeClass('hide')
-            };
         });
     }
 );
