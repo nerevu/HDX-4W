@@ -1,3 +1,7 @@
+.rangeslider__fill {
+  background: #fdbe85;
+}
+
 .dc-chart g.row text {
     fill: black;
     font-size:0.8em;
@@ -36,11 +40,11 @@
     padding-right:0px;
     padding-left:0px;
 }
-    
+
  .hdx-3w-chart {
     width:100%;
  }
- 
+
  .hdx-3w-info{
     padding:5px;
     background-color:white;

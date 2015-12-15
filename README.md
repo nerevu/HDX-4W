@@ -1,2 +1,2 @@
-# HDX-3W
-Draft version of 3W visualisation composition - Will be revised with leaflet when time permits
+# HDX-4W
+Draft version of 4W visualization composition
