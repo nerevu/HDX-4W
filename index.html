@@ -1,82 +1,82 @@
 <html>
-	<head>
-		<title>4W Dashboard</title>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<link rel="stylesheet" href="css/bootstrap.min.css">
-		<link rel="stylesheet" type="text/css" href="css/dc.css"/>
-		<link rel="stylesheet" type="text/css" href="css/leaflet.css"/>
-		<link rel="stylesheet" type="text/css" href="css/rangeslider.css"/>
+  <head>
+    <title>4W Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/dc.css"/>
+    <link rel="stylesheet" type="text/css" href="css/leaflet.css"/>
+    <link rel="stylesheet" type="text/css" href="css/rangeslider.css"/>
     <link rel="stylesheet" type="text/css" href="css/site.css"/>
-		<script src="js/jquery.js"></script>
-		<script src="js/d3.min.js"></script>
-		<script src="js/crossfilter.v1.min.js"></script>
-		<script src="js/dc.js"></script>
-		<script src="js/leaflet.js"></script>
-		<script src="js/dc.leaflet.js"></script>
-		<script src="js/rangeslider.min.js"></script>
-		<script src="js/moment.min.js"></script>
-	</head>
-	<body>
-		<div class="container">
-			<div class="row">
-				<div class="col-md-12">
-					<h2 id="title"></h2>
-				</div>
-			</div>
-			<div id="header" class="row">
-				<div class="col-md-8">
-					<p id="description"></p>
-				</div>
-				<div class="col-md-1">
-					<a class="reset btn btn-primary btn-sm" id="reset" href="javascript:dc.filterAll();dc.redrawAll();">Reset All</a>
-				</div>
-				<div id="count-info" class="col-md-3">
-					<span class="filter-count "></span> selected out of <span class="total-count "></span> records.
-				</div>
-			</div>
-			<div id="hdx-3w-visualization-wrapper">
-	      <p class="4w hide">When (<span class="4w-when" id="value"></span>)</p>
-	      <br class="4w hide">
-	      <div class="row">
-	        <div class="col-sm-1 col-xs-2">
-	          <button class="btn play 4w hide">
-	            <i class="glyphicon glyphicon-play"></i>
-	          </button>
-	          <button class="btn hide pause">
-	            <i class="glyphicon glyphicon-pause"></i>
-	          </button>
-	        </div>
-	        <div class="col-sm-11 col-xs-10" id="three-w-slider">
-	          <input class="4w slider hide" type="range" step="1">
-	        </div>
-	      </div>
-	    </div>
+    <script src="js/jquery.js"></script>
+    <script src="js/d3.min.js"></script>
+    <script src="js/crossfilter.v1.min.js"></script>
+    <script src="js/dc.js"></script>
+    <script src="js/leaflet.js"></script>
+    <script src="js/dc.leaflet.js"></script>
+    <script src="js/rangeslider.min.js"></script>
+    <script src="js/moment.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2 id="title"></h2>
+        </div>
+      </div>
+      <div id="header" class="row">
+        <div class="col-md-8">
+          <p id="description"></p>
+        </div>
+        <div class="col-md-1">
+          <a class="reset btn btn-primary btn-sm" id="reset" href="javascript:dc.filterAll();dc.redrawAll();">Reset All</a>
+        </div>
+        <div id="count-info" class="col-md-3">
+          <span class="filter-count "></span> selected out of <span class="total-count "></span> records.
+        </div>
+      </div>
+      <div id="hdx-3w-visualization-wrapper">
+        <p class="4w hide">When (<span class="4w-when" id="value"></span>)</p>
+        <br class="4w hide">
+        <div class="row">
+          <div class="col-sm-1 col-xs-2">
+            <button class="btn play 4w hide">
+              <i class="glyphicon glyphicon-play"></i>
+            </button>
+            <button class="btn hide pause">
+              <i class="glyphicon glyphicon-pause"></i>
+            </button>
+          </div>
+          <div class="col-sm-11 col-xs-10" id="three-w-slider">
+            <input class="4w slider hide" type="range" step="1">
+          </div>
+        </div>
+      </div>
       <div class="row">
         <div class="col-sm-11 col-xs-10 col-sm-offset-1 col-xs-offset-2">
           <svg id="hdx-3W-slider-axis"></svg>
         </div>
       </div>
       <br>
-			<div class="row">
-				<div class="col-md-8 colheight">
-					<div class="col-xs-6 removepadding">
-						<p>Who (Top 15)</p>
-						<div id="hdx-3W-who" class="hdx-3w-chart"></div>
-					</div>
-					<div class="col-xs-6 removepadding">
-						<p>What (Top 15)</p>
-						<div id="hdx-3W-what" class="hdx-3w-chart"></div>
-					</div>
-				</div>
-				<div class="col-md-4  colheight">
-					<div class="col-xs-12 removepadding">
-						<p id="wheretitle">Where</p>
-						<div id="hdx-3W-where" class="hdx-3w-chart"></div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<script src="js/site.js"></script>
-	</body>
+      <div class="row">
+        <div class="col-md-8 colheight">
+          <div class="col-xs-6 removepadding">
+            <p>Who (Top 15)</p>
+            <div id="hdx-3W-who" class="hdx-3w-chart"></div>
+          </div>
+          <div class="col-xs-6 removepadding">
+            <p>What (Top 15)</p>
+            <div id="hdx-3W-what" class="hdx-3w-chart"></div>
+          </div>
+        </div>
+        <div class="col-md-4  colheight">
+          <div class="col-xs-12 removepadding">
+            <p id="wheretitle">Where</p>
+            <div id="hdx-3W-where" class="hdx-3w-chart"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="js/site.js"></script>
+  </body>
 </html>

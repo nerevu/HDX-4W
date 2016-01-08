@@ -611,10 +611,10 @@ dc.leafletChoroplethChart = function (parent, chartGroup) {
     var _featureKey = function (feature) {
         return feature.key;
     };
-    
+
     function isSelectedGeo(d) {
         return _chart.hasFilter(d.key);
-    }    
+    }
 
     var _featureStyle = function (feature) {
         var options = _chart.featureOptions();
@@ -628,17 +628,17 @@ dc.leafletChoroplethChart = function (parent, chartGroup) {
                 if (isSelectedGeo(v.d)) {
                     options.fillColor = _chart.getColor(v.d.value, v.i);
                     options.opacity = 0.8;
-                    options.fillOpacity = 1;                                
+                    options.fillOpacity = 1;
                 } else {
                     options.fillColor = _chart.getColor(0, v.i);
                     options.opacity = 0.8;
-                    options.fillOpacity = 1;                                
+                    options.fillOpacity = 1;
                 }
             } else {
                 options.fillColor = _chart.getColor(v.d.value, v.i);
                 options.opacity = 0.8;
-                options.fillOpacity = 1;                 
-            }           
+                options.fillOpacity = 1;
+            }
         }
         return options;
     };
@@ -667,7 +667,7 @@ dc.leafletChoroplethChart = function (parent, chartGroup) {
             };
 
         _info.addTo(_chart.map());
-                
+
         _chart.map().addLayer(_geojsonLayer);
     };
 
@@ -740,14 +740,14 @@ dc.leafletChoroplethChart = function (parent, chartGroup) {
         var v = _dataMap[_chart.featureKeyAccessor()(feature)];
         if (v && v.d) {
             layer.key = v.d.key;
-            if (_chart.renderPopup()) {             
+            if (_chart.renderPopup()) {
                 //layer.bindPopup(_chart.popup()(v.d, feature));
                 layer.on("mouseover",function(){
                     _info.update(_chart.popup()(v.d, feature));
                 });
                 layer.on("mouseout",function(){
                     _info.update();
-                });                
+                });
             }
             if (_chart.brushOn()) {
                 layer.on("click", selectFilter);
