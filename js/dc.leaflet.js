@@ -663,7 +663,7 @@ dc.leafletChoroplethChart = function (parent, chartGroup) {
             };
 
         _info.update = function (name) {
-                this._div.innerHTML = (name ? name: 'Hover for name');
+                this._div.innerHTML = (name ? name: 'Hover for details');
             };
 
         _info.addTo(_chart.map());

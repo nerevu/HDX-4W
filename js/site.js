@@ -124,7 +124,7 @@ function generate3WComponent(config, data, geom) {
         .featureKeyAccessor(function(feature){
             return feature.properties[config.joinAttribute].toLowerCase();
         }).popup(function(d){
-            return lookup[d.key];
+            return lookup[d.key] + ", Activities: " + d.value;
         })
         .renderPopup(true);
 
